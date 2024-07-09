@@ -5,7 +5,7 @@ from datetime import datetime
 import pickle
 
 class Article:
-
+    
     @classmethod
     def __init__(cls, title, desc, url, time, id):
         cls.title = title
@@ -57,13 +57,12 @@ def get_first():
 
         Article.id = Article.url.split("/")
         Article.id = Article.id[-2]
+        Article.__getstate__()
         
-        a = Article.__getstate__()
-    
         with open('News.pkl', 'wb') as fp:
-            pickle.dump(a, fp)
+            pickle.dump(Article, fp)
             
-print(get_first())
+            
 def check_news_upd():
     with open("news_dict.json", encoding="utf-8") as file:
         news_dict = json.load(file)
@@ -87,6 +86,7 @@ def check_news_upd():
 
         if article_id in news_dict:
             continue
+
         else:
             article_title = article.find("h2", class_="tm-title").text
             article_desc = article.find(class_="tm-article-body").text
