@@ -47,8 +47,8 @@ def get_first():
 print(get_first())
             
 def check_news_upd():
-    with open("News.pkl") as fp:
-         news = f.load(file)
+    with open("News.pkl", 'rb') as fp:
+         news = pickle.load(fp)
 
     heads = {
         "User-Agent":
@@ -61,11 +61,12 @@ def check_news_upd():
     soup = B(r.text, "lxml")
     articles = soup.find_all("article", class_="tm-articles-list__item")
 
-    fresh_news = {}
+    
     for article in articles:
-        article_url = f'https://habr.com{article.find("h2").find("a").get("href")}'
-        article_id = article_url.split("/")
-        article_id = article_id[-2]
+        A = Article
+        Article.url = f'https://habr.com{article.find("h2").find("a").get("href")}'
+        Article.id = Article.url.split("/")
+        Article.id = Article.id[-2]
 
         if article_id in news_dict:
             continue
