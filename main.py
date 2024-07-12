@@ -6,31 +6,12 @@ import pickle
 
 class Article:
     
-    @classmethod
-    def __init__(cls, title, desc, url, time, id):
-        cls.title = title
-        cls.desc = desc
-        cls.url = url
-        cls.time = time
-        cls.id = id
-    @classmethod
-    def __getstate__(cls) -> dict:
-        '''Метод для записи атрибутов класса в файл'''
-        state = {}
-        state['title'] = cls.title
-        state['desc'] = cls.desc
-        state['url'] = cls.url
-        state['time'] = cls.time
-        state['id'] = cls.id
-        return state
-    @classmethod
-    def __setstate__(cls, state:dict):
-        '''Метод для восстановления класса из байтов'''
-        cls.title = state['title']
-        cls.desc = state['desc']
-        cls.url = state['url']
-        cls.time = state['time']
-        cls.id = state['id']
+    def __init__(self, title, desc, url, time, id):
+        self.title = title
+        self.desc = desc
+        self.url = url
+        self.time = time
+        self.id = id
 
 def get_first():
     '''Собирает первую партию новостей в объект'''
@@ -46,6 +27,7 @@ def get_first():
     articles = soup.find_all("article", class_="tm-articles-list__item")
 
     for article in articles:
+        A = Article
         Article.title = article.find("h2", class_="tm-title").text
         Article.desc = article.find(class_="tm-article-body").text
         Article.url = f'https://habr.com{article.find("h2").find("a").get("href")}'
@@ -57,15 +39,16 @@ def get_first():
 
         Article.id = Article.url.split("/")
         Article.id = Article.id[-2]
-        Article.__getstate__()
+        
         
         with open('News.pkl', 'wb') as fp:
-            pickle.dump(Article, fp)
-            
+            pickle.dump(A, fp)
+
+print(get_first())
             
 def check_news_upd():
-    with open("news_dict.json", encoding="utf-8") as file:
-        news_dict = json.load(file)
+    with open("News.pkl") as fp:
+         news = f.load(file)
 
     heads = {
         "User-Agent":
