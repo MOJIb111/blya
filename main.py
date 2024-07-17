@@ -13,6 +13,7 @@ class Article:
         self.time = time
         self.id = id
 
+
 def get_first():
     '''Собирает первую партию новостей в объект'''
     heads = {
@@ -25,27 +26,33 @@ def get_first():
 
     soup = B(r.text, "lxml")
     articles = soup.find_all("article", class_="tm-articles-list__item")
-
+    
     for article in articles:
-        A = Article
         Article.title = article.find("h2", class_="tm-title").text
         Article.desc = article.find(class_="tm-article-body").text
         Article.url = f'https://habr.com{article.find("h2").find("a").get("href")}'
 
         article_date_time = article.find("time").get("datetime")
         date_from_iso = datetime.fromisoformat(article_date_time)
-        date_time = datetime.strftime(date_from_iso, "%Y-%m-%d %H:%M:%S")
-        Article.time = time.mktime(datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple())
+        Article.time = datetime.strftime(date_from_iso, "%Y-%m-%d %H:%M:%S")
 
         Article.id = Article.url.split("/")
         Article.id = Article.id[-2]
         
+        A = Article(Article.title,
+                    Article.desc,
+                    Article.url,
+                    Article.time,
+                    Article.id)
         
         with open('News.pkl', 'wb') as fp:
             pickle.dump(A, fp)
 
-print(get_first())
-            
+    # with open('News.pkl', 'rb') as fp:
+    #     news = pickle.load(fp)
+    #     print(news.time)
+
+    
 def check_news_upd():
     with open("News.pkl", 'rb') as fp:
          news = pickle.load(fp)
@@ -61,7 +68,7 @@ def check_news_upd():
     soup = B(r.text, "lxml")
     articles = soup.find_all("article", class_="tm-articles-list__item")
 
-    
+
     for article in articles:
         A = Article
         Article.url = f'https://habr.com{article.find("h2").find("a").get("href")}'
@@ -99,7 +106,7 @@ def check_news_upd():
     return fresh_news
 
 def main():
-    check_news_upd()
+    print(get_first())
 
 if __name__ == '__main__':
     main()
